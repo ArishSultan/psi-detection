@@ -1,12 +1,12 @@
 from pandas import DataFrame, concat, Series
 
-from ...features import Reducer
+# from ...features import Reducer
 from ..transformer import DataTransformerStep, DataTransformerResult
 
 
 class FeatureReduction(DataTransformerStep):
-    def __init__(self, reducers: list[Reducer]):
-        self._reducers = reducers
+    # def __init__(self, reducers: list[Reducer]):
+    #     self._reducers = reducers
 
     def _apply(self, result: DataTransformerResult) -> DataTransformerResult:
         new_result = DataTransformerResult()

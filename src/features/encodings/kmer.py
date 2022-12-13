@@ -1,9 +1,10 @@
-from typing import Any, Tuple
+from typing import Any
 from itertools import product
 from collections import Counter
 
 from ..encoding import Encoding
 from ...utils import get_seq_kind
+from ...data.transformer import DataTransformer
 
 
 def generate_all_kmers(k: int = 2, kind: str = 'DNA', upto: bool = False) -> tuple[Any, ...]:
@@ -75,10 +76,11 @@ def generate_kmers(sequence: str, k: int = 2, upto: bool = False) -> tuple[Any, 
     return tuple(results)
 
 
-def encode_kmer(sequence: str, k: int = 2, upto: bool = False, normalize: bool = False) -> tuple[Any, ...]:
+def encode_kmer(sequence: str, k: int = 2, upto: bool = False, normalize: bool = False, kmer_cache=None) -> tuple[Any, ...]:
     """
     Encodes dna / rna sequence to kmers format.
 
+    :param kmer_cache:
     :param sequence any dna or rna sequence
     :param k determines length of mers (must be > 0)
     :param kind determines length of mers (must be > 0)
@@ -88,7 +90,7 @@ def encode_kmer(sequence: str, k: int = 2, upto: bool = False, normalize: bool =
            (values are divided by average for normalization)
     """
     seq_mers = generate_kmers(sequence, k, upto)
-    all_mers = generate_all_kmers(k, get_seq_kind(sequence), upto)
+    all_mers = generate_all_kmers(k, get_seq_kind(sequence), upto) if kmer_cache is None else kmer_cache
 
     counter = Counter()
     counter.update(seq_mers)
@@ -107,10 +109,11 @@ def encode_kmer(sequence: str, k: int = 2, upto: bool = False, normalize: bool =
 
 
 class Kmer(Encoding):
-    def __init__(self, k: int = 2, upto: bool = False, normalize: bool = False):
+    def __init__(self, k: int = 2, upto: bool = False, normalize: bool = False, kind: str = 'DNA'):
         self._k = k
         self._upto = upto
         self._normalize = normalize
+        self._kmer_cache = DataTransformer.get_cache(f'kmer_{k}', lambda _: generate_all_kmers(k=k, kind=kind))
 
     @property
     def name(self):
@@ -131,4 +134,3 @@ class KmerText(Encoding):
 
     def encode(self, sequence: str, label: bool = False):
         return generate_kmers(sequence, self._k, self._upto)
-

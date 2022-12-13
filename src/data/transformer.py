@@ -63,6 +63,17 @@ def _prepare_data(value) -> DataTransformerResult:
 
 
 class DataTransformer:
+    cache = dict()
+
+    @staticmethod
+    def get_cache(key: str, value):
+        if key in DataTransformer.cache:
+            return DataTransformer.cache[key]
+        else:
+            resolved_value = value(None)
+            DataTransformer.cache[key] = resolved_value
+            return resolved_value
+
     def __init__(self, steps: List[DataTransformerStep]):
         self._steps = steps
 
@@ -71,4 +82,5 @@ class DataTransformer:
         for step in self._steps:
             result = step.apply(result)
 
+        DataTransformer.cache = dict()
         return result

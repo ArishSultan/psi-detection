@@ -1,7 +1,8 @@
 from typing import Any
 
-from .kmer import encode_kmer
+from .kmer import encode_kmer, generate_all_kmers
 from ..encoding import Encoding
+from ...data import DataTransformer
 
 
 def encode_knc(sequence: str, k: int = 2) -> tuple[Any, ...]:
@@ -9,11 +10,12 @@ def encode_knc(sequence: str, k: int = 2) -> tuple[Any, ...]:
 
 
 class KNC(Encoding):
-    def __init__(self, k: int = 2):
+    def __init__(self, k: int = 2, kind='DNA'):
         if k < 1:
             raise 'K should be greater than 0'
 
         self._k = k
+        self._kmer_cache = DataTransformer.get_cache(f'kmer_{k}', lambda _: generate_all_kmers(k=k, kind=kind))
 
     @property
     def name(self):

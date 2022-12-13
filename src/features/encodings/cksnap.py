@@ -2,15 +2,16 @@ from typing import Any
 
 from .kmer import generate_all_kmers
 from ..encoding import Encoding
+from ...data import DataTransformer
 from ...utils import kmer_to_dict, get_nucleotides_from_kind
 
 
-def encode_cksnap(sequence: str, gap: int = 0, kind: str = 'DNA') -> tuple[Any, ...]:
+def encode_cksnap(sequence: str, gap: int = 0, kind: str = 'DNA', kmer_cache=None) -> tuple[Any, ...]:
     if gap < 0:
         raise '`gap` should be >= 0'
 
     encoded_seq = []
-    kmers = generate_all_kmers(2, kind, False)
+    kmers = generate_all_kmers(2, kind, False) if kmer_cache is None else kmer_cache
     nucleotides = get_nucleotides_from_kind(kind)
 
     for g in range(gap + 1):
@@ -36,6 +37,7 @@ class CKSNAP(Encoding):
     def __init__(self, gap: int = 0, kind: str = 'DNA'):
         self._gap = gap
         self._kind = kind
+        self._kmer_cache = DataTransformer.get_cache('kmer_2', lambda _: generate_all_kmers(k=2, kind=kind))
 
     @property
     def name(self):
