@@ -44,4 +44,4 @@ class CKSNAP(Encoding):
         return f'cksnap_{self._gap}'
 
     def encode(self, sequence: str, label: bool = False):
-        return encode_cksnap(sequence, self._gap, self._kind)
+        return encode_cksnap(sequence, self._gap, self._kind, kmer_cache=self._kmer_cache)

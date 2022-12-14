@@ -31,8 +31,6 @@ def main():
             encodings.CKSNAP(gap=5, kind='RNA'),
             encodings.CKSNAP(gap=6, kind='RNA'),
             encodings.CKSNAP(gap=7, kind='RNA'),
-            encodings.CKSNAP(gap=8, kind='RNA'),
-            encodings.DNC(),
             encodings.EIIP(),
             encodings.ENAC(window=2),
             encodings.ENAC(window=3),
@@ -40,57 +38,56 @@ def main():
             encodings.ENAC(window=5),
             encodings.ENAC(window=6),
             encodings.ENAC(window=7),
-            encodings.ENAC(window=8),
             encodings.Kmer(k=2, kind='RNA'),
             encodings.Kmer(k=3, kind='RNA'),
             encodings.Kmer(k=4, kind='RNA'),
             encodings.Kmer(k=5, kind='RNA'),
             encodings.Kmer(k=6, kind='RNA'),
             encodings.Kmer(k=7, kind='RNA'),
-            encodings.Kmer(k=8, kind='RNA'),
+            encodings.KmerText(k=1),
             encodings.KmerText(k=2),
             encodings.KmerText(k=3),
             encodings.KmerText(k=4),
             encodings.KmerText(k=5),
             encodings.KmerText(k=6),
             encodings.KmerText(k=7),
-            encodings.KmerText(k=8),
             encodings.KNC(k=2),
             encodings.KNC(k=3),
             encodings.KNC(k=4),
             encodings.KNC(k=5),
             encodings.KNC(k=6),
             encodings.KNC(k=7),
-            encodings.KNC(k=8),
             encodings.MCN(),
             encodings.MCN(split=True),
             encodings.NAC(),
             encodings.NCP(),
             encodings.ND(),
-            # encodings.PSDP(),
             encodings.PseEIIP(kind='RNA'),
-            # encodings.PseKNC(),
-            # encodings.PSNP(),
-            # encodings.PSTP(),
             encodings.RCKmer(k=2),
             encodings.RCKmer(k=3),
             encodings.RCKmer(k=4),
             encodings.RCKmer(k=5),
             encodings.RCKmer(k=6),
-            encodings.RCKmer(k=7),
-            encodings.RCKmer(k=8),
-            encodings.TNC()
+            encodings.RCKmer(k=7)
+            # encodings.PSDP(),
+            # encodings.PseKNC(),
+            # encodings.PSNP(),
+            # encodings.PSTP(),
         ]),
         steps.Splitter(),
     ])
 
-    rmtree(PROCESSED_DATA_DIR, ignore_errors=True)
+    # uncomment the following line to remove directory before generation
+    #
+    # rmtree(PROCESSED_DATA_DIR, ignore_errors=True)
 
     for file, flag in FILES.items():
         filename = str(RAW_DATA_DIR / file) + '.csv'
         data = read_csv(filename, header='infer' if flag else None)
 
+        print(file)
         result = data_transformer.transform(data)
+        print()
 
         for key, value in result.iter():
             sub_path = key.replace('>', '/')
@@ -107,6 +104,7 @@ def main():
             else:
                 filename = filename / sub_path.name
 
+            print('Writing', filename)
             value.to_csv(str(filename) + '.csv', index=False)
 
 

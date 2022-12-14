@@ -58,7 +58,7 @@ def generate_kmers(sequence: str, k: int = 2, upto: bool = False) -> tuple[Any, 
 
     :param sequence any DNA or RNA sequence
     :param k determines length of mers (must be > 0)
-    :param upto determines wather to generate all mers of length upto k i.e.
+    :param upto determines whether to generate all mers of length upto k i.e.
            generate_kmers(2, upto=True) will generate all mers of length 1 and 2
     """
 
@@ -76,18 +76,18 @@ def generate_kmers(sequence: str, k: int = 2, upto: bool = False) -> tuple[Any, 
     return tuple(results)
 
 
-def encode_kmer(sequence: str, k: int = 2, upto: bool = False, normalize: bool = False, kmer_cache=None) -> tuple[Any, ...]:
+def encode_kmer(sequence: str, k: int = 2, upto: bool = False, normalize: bool = False, kmer_cache=None) \
+        -> tuple[Any, ...]:
     """
     Encodes dna / rna sequence to kmers format.
 
-    :param kmer_cache:
     :param sequence any dna or rna sequence
     :param k determines length of mers (must be > 0)
-    :param kind determines length of mers (must be > 0)
-    :param upto determines wather to generate all mers of length upto k i.e.
+    :param upto determines whether to generate all mers of length upto k i.e.
            generate_kmers(2, upto=True) will generate all mers of length 1 and 2
-    :param normalize determines whather to normalize all the values or not
+    :param normalize determines whether to normalize all the values or not
            (values are divided by average for normalization)
+    :param kmer_cache khk
     """
     seq_mers = generate_kmers(sequence, k, upto)
     all_mers = generate_all_kmers(k, get_seq_kind(sequence), upto) if kmer_cache is None else kmer_cache
@@ -120,7 +120,7 @@ class Kmer(Encoding):
         return f'kmer{"_upto_" if self._upto else ""}_{self._k}{"_n" if self._normalize else ""}'
 
     def encode(self, sequence: str, label: bool = False):
-        return encode_kmer(sequence, self._k, self._upto, self._normalize)
+        return encode_kmer(sequence, self._k, self._upto, self._normalize, kmer_cache=self._kmer_cache)
 
 
 class KmerText(Encoding):

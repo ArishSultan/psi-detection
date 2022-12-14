@@ -5,8 +5,8 @@ from ..encoding import Encoding
 from ...data import DataTransformer
 
 
-def encode_knc(sequence: str, k: int = 2) -> tuple[Any, ...]:
-    return encode_kmer(sequence, k, upto=False, normalize=True)
+def encode_knc(sequence: str, k: int = 2, kmer_cache=None) -> tuple[Any, ...]:
+    return encode_kmer(sequence, k, upto=False, normalize=True, kmer_cache=kmer_cache)
 
 
 class KNC(Encoding):
@@ -28,4 +28,4 @@ class KNC(Encoding):
         return f'knc_{self._k}'
 
     def encode(self, sequence: str, label: bool = False):
-        return encode_knc(sequence, self._k)
+        return encode_knc(sequence, self._k, kmer_cache=self._kmer_cache)

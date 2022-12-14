@@ -82,5 +82,4 @@ class DataTransformer:
         for step in self._steps:
             result = step.apply(result)
 
-        DataTransformer.cache = dict()
         return result
